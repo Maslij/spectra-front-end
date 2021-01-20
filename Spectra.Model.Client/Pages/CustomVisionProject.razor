@@ -1,0 +1,124 @@
+﻿@page "/project/{projectId}"
+
+@using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
+@using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
+@using Spectra.Model.Client.Data
+@using Newtonsoft.Json;
+@using System.Linq;
+@using System.Text;
+@using System.Net;
+
+@inject CustomVisionService _customVisionService
+
+@if (customVisionProject == null)
+{
+    <i class="fas fa-spinner fa-spin"></i>
+}
+else
+{
+    <span class="badge badge-primary"> @taggedImageCount Tagged Images</span>
+    <span class="badge badge-warning"> @untaggedImageCount Untagged Images</span>
+    <h1>@customVisionProject.Name</h1>
+    <p>@customVisionProject.Description</p>
+
+    <h2 class="pt-3">Tags</h2>
+    @foreach (var tag in projectTags)
+    {
+        <span class="badge badge-success mr-1">@tag.Name</span>
+    }
+    <h2 class="pt-3">Performance</h2>
+    <label>Probability Threshold</label>
+    <div class="slidecontainer">
+        <input  @onchange="UpdatePerformance" type="range" min="1" max="100" class="slider" id="myRange">
+    </div> 
+    @probabilityThreshold
+    @foreach (var iteration in projectIteration)
+    {
+        <h6>
+            @iteration.Name
+        </h6>
+        <p>Precision</p>
+        var setPrecision = $"{Math.Round(_iterationPerformance[iteration.Id].Precision, 2) * 100}%";
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width:@setPrecision" aria-valuenow="@_iterationPerformance[iteration.Id].Precision" aria-valuemin="0" aria-valuemax="100">
+                @setPrecision
+            </div>
+        </div>
+        <p>Recall</p>
+        var setRecall = $"{Math.Round(_iterationPerformance[iteration.Id].Recall, 2) * 100}%";
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width:@setRecall" aria-valuenow="@_iterationPerformance[iteration.Id].Recall" aria-valuemin="0" aria-valuemax="100">
+                @setRecall
+            </div>
+        </div>
+        <p>mAP</p>
+        var setmAP = $"{Math.Round((double)_iterationPerformance[iteration.Id].AveragePrecision, 2) * 100}%";
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width:@setmAP" aria-valuenow="@_iterationPerformance[iteration.Id].AveragePrecision" aria-valuemin="0" aria-valuemax="100">
+                @setmAP
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public string ProjectId { get; set; }
+
+    // Objects
+    private Project customVisionProject;
+    private IList<Iteration> projectIteration = new List<Iteration>();
+    private IList<Tag> projectTags = new List<Tag>();
+    private IDictionary<Guid, IterationPerformance> _iterationPerformance = new Dictionary<Guid, IterationPerformance>();
+    private double probabilityThreshold = .5;
+
+    // Stats
+    private int? taggedImageCount;
+    private int? untaggedImageCount;
+
+    // Custom Vision Settings
+    private string TrainingKey = "c750b0db2467468c87352d069d4a38e2";
+    private string Endpoint = "https://spectra-video-analytics.cognitiveservices.azure.com/";
+    private CustomVisionTrainingClient trainingApi;
+
+    protected async Task ConnectToCustomVision()
+    {
+
+
+        try
+        {
+            customVisionProject = await trainingApi.GetProjectAsync(Guid.Parse(ProjectId));
+            projectIteration = await trainingApi.GetIterationsAsync(customVisionProject.Id);
+            taggedImageCount = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id);
+            untaggedImageCount = await trainingApi.GetUntaggedImageCountAsync(customVisionProject.Id);
+            projectTags = await trainingApi.GetTagsAsync(customVisionProject.Id);
+
+
+            foreach (var iteration in projectIteration)
+            {
+                _iterationPerformance.Add(iteration.Id, await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, iteration.Id, threshold: probabilityThreshold/100));
+            }
+        }
+        catch
+        {
+
+        }
+    }
+
+    protected async Task UpdatePerformance(ChangeEventArgs e)
+    {
+        probabilityThreshold = Convert.ToDouble(e.Value.ToString())/100;
+
+        foreach (var iteration in projectIteration)
+        {
+            _iterationPerformance[iteration.Id] = await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, iteration.Id, threshold: probabilityThreshold);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
+        ProjectId = ProjectId ?? null;
+        await ConnectToCustomVision();
+    }
+}

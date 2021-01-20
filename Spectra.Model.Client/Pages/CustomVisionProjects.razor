@@ -1,0 +1,59 @@
+﻿@using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
+@using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
+@using Spectra.Model.Client.Data
+@using Newtonsoft.Json;
+@using System.Linq;
+@using System.Text;
+@using System.Net;
+
+@inject CustomVisionService _customVisionService
+
+<div class="container">
+    <div class="row">
+        <div class="row" style="padding-top: 10px;">
+            <div class="card-deck">
+                @if (customVisionProjects == null)
+                {
+                    <i class="fas fa-spinner fa-spin"></i>
+                }
+                else
+                {
+                    @foreach (var project in customVisionProjects)
+                    {
+
+                        <div class="card" style="width: 18rem;">
+                            <img src="@project.ThumbnailUri" class="card-img-top" alt="..." style="height: 200px;">
+                            <div class="card-body">
+                                <span class="badge badge-secondary" style="margin-bottom:5px;">@project.Settings.ClassificationType</span>
+                                <h5 class="card-title">@project.Name</h5>
+                                <p class="card-text">@project.Description</p>
+                                <a href="/project/@project.Id" class="stretched-link"></a>
+
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IList<Project> customVisionProjects = new List<Project>();
+
+    private string TrainingKey = "c750b0db2467468c87352d069d4a38e2";
+    private string Endpoint = "https://spectra-video-analytics.cognitiveservices.azure.com/";
+
+
+    protected async Task ConnectToCustomVision()
+    {
+        CustomVisionTrainingClient trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
+
+        customVisionProjects = await trainingApi.GetProjectsAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ConnectToCustomVision();
+    }
+}

@@ -1,0 +1,54 @@
+/* All of Telstra Gradients */
+
+.linear-gradient.blue[b-zzk4f7t6u4] {
+    background-color: #0064D2;
+    background-image: -webkit-linear-gradient(-360deg, #0064D2 0%, #5CD6E0 30%, #5E50BF 100%);
+    background-image: linear-gradient(90deg, #0064D2 0%, #5CD6E0 30%, #5E50BF 100%)
+}
+
+
+
+.linear-gradient.green[b-zzk4f7t6u4] {
+    background-color: #008A00;
+    background-image: -webkit-linear-gradient(-360deg, #008A00 0%, #7DE0A1 30%, #008381 100%);
+    background-image: linear-gradient(90deg, #008A00 0%, #7DE0A1 30%, #008381 100%)
+}
+
+
+
+.linear-gradient.magenta[b-zzk4f7t6u4] {
+    background-color: #A0148C;
+    background-image: -webkit-linear-gradient(-360deg, #A0148C 0%, #FFAD6E 30%, #FF7AA3 100%);
+    background-image: linear-gradient(90deg, #A0148C 0%, #FFAD6E 30%, #FF7AA3 100%)
+}
+
+
+
+.linear-gradient.orange[b-zzk4f7t6u4] {
+    background-color: #F7AB59;
+    background-image: -webkit-linear-gradient(-360deg, #F7AB59 0%, #EA5153 35%, #C24279 70%);
+    background-image: linear-gradient(90deg, #F7AB59 0%, #EA5153 35%, #C24279 70%)
+}
+
+
+
+.linear-gradient.purple[b-zzk4f7t6u4] {
+    background-color: #8779B7;
+    background-image: -webkit-linear-gradient(-360deg, #8779B7 0%, #C69DC9 35%, #5BC0f2 70%);
+    background-image: linear-gradient(90deg, #8779B7 0%, #C69DC9 35%, #5BC0f2 70%)
+}
+
+
+
+.linear-gradient.turquoise[b-zzk4f7t6u4] {
+    background-color: #009792;
+    background-image: -webkit-linear-gradient(-360deg, #009792 0%, #23B8D6 35%, #C6D86b 70%);
+    background-image: linear-gradient(90deg, #009792 0%, #23B8D6 35%, #C6D86b 70%)
+}
+
+/* End of Telstra Gradients */
+
+.linear-gradient[b-zzk4f7t6u4] {
+    height: 3px;
+    width: 100%;
+}
