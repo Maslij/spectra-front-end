@@ -219,7 +219,6 @@ using System.Text;
 
     async Task GetProjectWithImagesAndRegions(Guid projectId)
     {
-
         exportingProject = true;
         exportedProject = null;
         exportingProjectStatus = "Retrieving project.";
@@ -242,6 +241,8 @@ using System.Text;
         exportingProjectStatus = "Exporting annotations. This might take a while.";
 
         var client = clientFactory.CreateClient();
+        client.Timeout = TimeSpan.FromMinutes(20);
+
         var response = await client.SendAsync(request);
 
         //var response = await client.SendAsync(request).ConfigureAwait(false);
