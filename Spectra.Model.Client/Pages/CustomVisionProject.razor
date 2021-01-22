@@ -1,12 +1,11 @@
 ﻿@page "/project/{projectId}"
+@inject IHttpClientFactory clientFactory
 
 @using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
 @using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
 @using Spectra.Model.Client.Data
 @using Newtonsoft.Json;
-@using System.Linq;
 @using System.Text;
-@using System.Net;
 
 @inject CustomVisionService _customVisionService
 
@@ -18,47 +17,117 @@ else
 {
     <span class="badge badge-primary"> @taggedImageCount Tagged Images</span>
     <span class="badge badge-warning"> @untaggedImageCount Untagged Images</span>
+
     <h1>@customVisionProject.Name</h1>
     <p>@customVisionProject.Description</p>
 
-    <h2 class="pt-3">Tags</h2>
+    <h2>Tags</h2>
     @foreach (var tag in projectTags)
     {
         <span class="badge badge-success mr-1">@tag.Name</span>
     }
-    <h2 class="pt-3">Performance</h2>
+
+    <h2 class="pt-3">Iterations</h2>
+    <p>Select a published Iteration to display the model performance.</p>
     <label>Probability Threshold</label>
     <div class="slidecontainer">
-        <input  @onchange="UpdatePerformance" type="range" min="1" max="100" class="slider" id="myRange">
-    </div> 
-    @probabilityThreshold
-    @foreach (var iteration in projectIteration)
-    {
-        <h6>
-            @iteration.Name
-        </h6>
-        <p>Precision</p>
-        var setPrecision = $"{Math.Round(_iterationPerformance[iteration.Id].Precision, 2) * 100}%";
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width:@setPrecision" aria-valuenow="@_iterationPerformance[iteration.Id].Precision" aria-valuemin="0" aria-valuemax="100">
-                @setPrecision
+        <input @onchange="UpdatePerformance" type="range" min="1" max="100" class="slider" id="myRange">
+    </div>
+    <p>@probabilityThreshold</p>
+    <div class="row">
+        <div class="col-4">
+            <div class="list-group" id="list-tab" role="tablist">
+                @foreach (var iteration in projectIteration)
+                {
+                    <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" id="list-@iteration.Id-list" data-toggle="list" href="#list-@iteration.Id"
+                       @onclick:preventDefault="true"
+                       @onclick:stopPropagation="true"
+                       @onclick="() => SetIterationId(iteration.Id)" role="tab">
+                        @iteration.Name    <span class="badge badge-primary badge-pill">Trained on @_iterationTaggedImages[iteration.Id] Tagged Images</span>
+                    </a>
+                }
             </div>
         </div>
-        <p>Recall</p>
-        var setRecall = $"{Math.Round(_iterationPerformance[iteration.Id].Recall, 2) * 100}%";
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width:@setRecall" aria-valuenow="@_iterationPerformance[iteration.Id].Recall" aria-valuemin="0" aria-valuemax="100">
-                @setRecall
+        <div class="col-8">
+            <div class="tab-content">
+                @foreach (var iteration in projectIteration)
+                {
+                    var setPrecision = $"{Math.Round(_iterationPerformance[iteration.Id].Precision, 2) * 100}%";
+                    var setRecall = $"{Math.Round(_iterationPerformance[iteration.Id].Recall, 2) * 100}%";
+                    var setmAP = $"{Math.Round((double)_iterationPerformance[iteration.Id].AveragePrecision, 2) * 100}%";
+
+                <div class="tab-pane" id="list-@iteration.Id" role="tabpanel">
+                    @if (updatingPerformance)
+                    {
+                        <i class="fas fa-spinner fa-spin"></i>
+                    }
+                    else
+                    {
+                        <p>Finished training on <strong>@DateTime.Parse(iteration.TrainedAt.ToString()).ToLocalTime()</strong></p>
+                        <p>Iteration Id: <strong>@iteration.Id</strong></p>
+                        <p>Precision</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width:@setPrecision; background-color:#9a0089;" aria-valuenow="@_iterationPerformance[iteration.Id].Precision" aria-valuemin="0" aria-valuemax="100">
+                                @setPrecision
+                            </div>
+                        </div>
+                        <p>Recall</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width:@setRecall; background-color:#0063b1;" aria-valuenow="@_iterationPerformance[iteration.Id].Recall" aria-valuemin="0" aria-valuemax="100">
+                                @setRecall
+                            </div>
+                        </div>
+                        <p>mAP</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width:@setmAP; background-color:#69c138;" aria-valuenow="@_iterationPerformance[iteration.Id].AveragePrecision" aria-valuemin="0" aria-valuemax="100">
+                                @setmAP
+                            </div>
+                        </div>
+
+                        <AuthorizeView>
+                            <Authorized>
+                                @if (activateExporting)
+                                {
+                                    <div class="btn-toolbar pt-5" role="toolbar" aria-label="Toolbar with button groups">
+                                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                                            <button disabled="@exportingProject" @onclick="() => GetProjectWithImagesAndRegions(Guid.Parse(ProjectId))" class="btn btn-primary">Export Data</button>
+                                        </div>
+                                        <div class="btn-group mr-2" role="group" aria-label="Second group">
+                                            <select @bind="exportType" class="custom-select" id="inputGroupSelect03">
+                                                <option value="customvision" selected>Custom Vision</option>
+                                                <option value="pascal">Pascal</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p>Select an Iteration to export.</p>
+                                }
+
+                                @if (exportingProject)
+                                {
+                                    <div class="alert alert-info mt-2" role="alert" style="text-align:center;">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span>@exportingProjectStatus</span>
+                                    </div>
+                                }
+                                @if (exportedProject != null)
+                                {
+                                    <div class="alert alert-info mt-2" role="alert">
+                                        Export Completed, <a href="@exportedProject.ZippedProject" download="@exportedProject.ProjectId" target="_top">
+                                            download
+                                        </a> @exportedProject.ProjectId is ready!
+                                    </div>
+                                }
+                            </Authorized>
+                        </AuthorizeView>
+                    }
+                </div>
+                }
             </div>
         </div>
-        <p>mAP</p>
-        var setmAP = $"{Math.Round((double)_iterationPerformance[iteration.Id].AveragePrecision, 2) * 100}%";
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width:@setmAP" aria-valuenow="@_iterationPerformance[iteration.Id].AveragePrecision" aria-valuemin="0" aria-valuemax="100">
-                @setmAP
-            </div>
-        </div>
-    }
+    </div>
 }
 
 @code {
@@ -70,16 +139,27 @@ else
     private IList<Iteration> projectIteration = new List<Iteration>();
     private IList<Tag> projectTags = new List<Tag>();
     private IDictionary<Guid, IterationPerformance> _iterationPerformance = new Dictionary<Guid, IterationPerformance>();
-    private double probabilityThreshold = .5;
+    private IDictionary<Guid, int?> _iterationTaggedImages = new Dictionary<Guid, int?>();
+
+    private double probabilityThreshold = .6;
+    Spectra.Model.Client.Models.Export exportedProject;
 
     // Stats
     private int? taggedImageCount;
     private int? untaggedImageCount;
+    private bool updatingPerformance = false;
 
     // Custom Vision Settings
     private string TrainingKey = "c750b0db2467468c87352d069d4a38e2";
     private string Endpoint = "https://spectra-video-analytics.cognitiveservices.azure.com/";
     private CustomVisionTrainingClient trainingApi;
+
+    // Exporting
+    private bool exportingProject;
+    private string exportingProjectStatus;
+    private string exportType = "customvision";
+    private Guid selectedIteration;
+    private bool activateExporting = false;
 
     protected async Task ConnectToCustomVision()
     {
@@ -96,7 +176,9 @@ else
 
             foreach (var iteration in projectIteration)
             {
-                _iterationPerformance.Add(iteration.Id, await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, iteration.Id, threshold: probabilityThreshold/100));
+                _iterationPerformance.Add(iteration.Id, await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, iteration.Id, threshold: probabilityThreshold));
+                _iterationTaggedImages[iteration.Id] = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id, iterationId: iteration.Id);
+
             }
         }
         catch
@@ -105,14 +187,23 @@ else
         }
     }
 
+    protected async Task QuickTest()
+    {
+
+    }
+
     protected async Task UpdatePerformance(ChangeEventArgs e)
     {
-        probabilityThreshold = Convert.ToDouble(e.Value.ToString())/100;
+        updatingPerformance = true;
+        probabilityThreshold = Convert.ToDouble(e.Value.ToString()) / 100;
 
         foreach (var iteration in projectIteration)
         {
             _iterationPerformance[iteration.Id] = await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, iteration.Id, threshold: probabilityThreshold);
+            _iterationTaggedImages[iteration.Id] = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id, iterationId: iteration.Id);
         }
+        updatingPerformance = false;
+
     }
 
     protected override async Task OnInitializedAsync()
@@ -120,5 +211,49 @@ else
         trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
         ProjectId = ProjectId ?? null;
         await ConnectToCustomVision();
+    }
+
+    protected void SetIterationId(Guid IterationId)
+    {
+        if (!activateExporting)
+            activateExporting = true;
+        selectedIteration = IterationId;
+    }
+
+    async Task GetProjectWithImagesAndRegions(Guid projectId)
+    {
+
+        exportingProject = true;
+        exportedProject = null;
+        exportingProjectStatus = "Retrieving project.";
+        var json_dict = new Dictionary<string, string>
+{
+            { "Endpoint", Endpoint },
+            { "TrainingKey", TrainingKey }
+        };
+
+        var url = $"https://spectra-model-api.azurewebsites.net/api/project/{projectId}/images/{exportType}/{selectedIteration}";
+        var json = JsonConvert.SerializeObject(json_dict);
+
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri(url),
+            Content = new StringContent(json, Encoding.UTF8, "application/json"),
+        };
+
+        exportingProjectStatus = "Exporting annotations. This might take a while.";
+
+        var client = clientFactory.CreateClient();
+        var response = await client.SendAsync(request);
+
+        //var response = await client.SendAsync(request).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+
+        var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+        exportedProject = JsonConvert.DeserializeObject<Spectra.Model.Client.Models.Export>(responseBody);
+
+        exportingProject = false;
     }
 }

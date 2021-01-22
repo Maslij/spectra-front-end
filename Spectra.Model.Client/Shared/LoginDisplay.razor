@@ -1,13 +1,9 @@
 ﻿<AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage">Hello, @context.User.Identity.Name!</a>
-        <form class="form-inline my-2 my-lg-0" method="post" action="Identity/Account/LogOut">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
-        </form>
+        Hello, @context.User.Identity.Name!
+        <a href="MicrosoftIdentity/Account/SignOut">Log out</a>
     </Authorized>
     <NotAuthorized>
-        <span class="form-inline my-2 my-lg-0">
-            <a class="btn btn-outline-success my-2 my-sm-0" href="Identity/Account/Login">Log in</a>
-        </span>
+        <a href="MicrosoftIdentity/Account/SignIn">Log in</a>
     </NotAuthorized>
 </AuthorizeView>
