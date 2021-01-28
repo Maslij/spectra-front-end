@@ -104,27 +104,34 @@ using Spectra.Model.Client.Data;
 #nullable disable
 #nullable restore
 #line 4 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
-using Newtonsoft.Json;
+using Spectra.Model.Client.Models;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 5 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
-using System.Linq;
+using Newtonsoft.Json;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 6 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
-using System.Text;
+using System.Linq;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 7 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
+using System.Text;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 8 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
 using System.Net;
 
 #line default
@@ -138,9 +145,9 @@ using System.Net;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 41 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
+#line 44 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
        
-    private IList<Project> customVisionProjects = new List<Project>();
+    private IList<SpectraProject> customVisionProjects = new List<SpectraProject>();
 
     private string TrainingKey = "c750b0db2467468c87352d069d4a38e2";
     private string Endpoint = "https://spectra-video-analytics.cognitiveservices.azure.com/";
@@ -148,9 +155,14 @@ using System.Net;
 
     protected async Task ConnectToCustomVision()
     {
-        CustomVisionTrainingClient trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
+        //CustomVisionTrainingClient trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
 
-        customVisionProjects = await trainingApi.GetProjectsAsync();
+        //customVisionProjects = await trainingApi.GetProjectsAsync();
+
+        string jsonString = await _modelApiService.GetProjects();
+
+        customVisionProjects = JsonConvert.DeserializeObject<IList<SpectraProject>>(jsonString);
+
     }
 
     protected override async Task OnInitializedAsync()
@@ -161,6 +173,7 @@ using System.Net;
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ModelApiService _modelApiService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private CustomVisionService _customVisionService { get; set; }
     }
 }

@@ -18,6 +18,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Spectra.Model.Client.Models;
 
 namespace Spectra.Model.Client
 {
@@ -36,6 +38,7 @@ namespace Spectra.Model.Client
         {
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"));
+
             services.AddControllersWithViews()
                 .AddMicrosoftIdentityUI();
 
@@ -48,6 +51,9 @@ namespace Spectra.Model.Client
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<CustomVisionService>();
+            services.AddSingleton<ModelApiService>();
+
+            services.Configure<ApiConfig>(Configuration.GetSection("ApiSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

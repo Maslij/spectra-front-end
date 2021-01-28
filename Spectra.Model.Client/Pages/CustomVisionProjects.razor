@@ -1,12 +1,15 @@
 ﻿@using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
 @using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
-@using Spectra.Model.Client.Data
+@using Spectra.Model.Client.Data;
+@using Spectra.Model.Client.Models;
 @using Newtonsoft.Json;
 @using System.Linq;
 @using System.Text;
 @using System.Net;
 
 @inject CustomVisionService _customVisionService
+@inject ModelApiService _modelApiService
+
 
 <div class="container">
     <div class="row">
@@ -39,7 +42,7 @@
 </div>
 
 @code {
-    private IList<Project> customVisionProjects = new List<Project>();
+    private IList<SpectraProject> customVisionProjects = new List<SpectraProject>();
 
     private string TrainingKey = "c750b0db2467468c87352d069d4a38e2";
     private string Endpoint = "https://spectra-video-analytics.cognitiveservices.azure.com/";
@@ -47,9 +50,14 @@
 
     protected async Task ConnectToCustomVision()
     {
-        CustomVisionTrainingClient trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
+        //CustomVisionTrainingClient trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
 
-        customVisionProjects = await trainingApi.GetProjectsAsync();
+        //customVisionProjects = await trainingApi.GetProjectsAsync();
+
+        string jsonString = await _modelApiService.GetProjects();
+
+        customVisionProjects = JsonConvert.DeserializeObject<IList<SpectraProject>>(jsonString);
+
     }
 
     protected override async Task OnInitializedAsync()

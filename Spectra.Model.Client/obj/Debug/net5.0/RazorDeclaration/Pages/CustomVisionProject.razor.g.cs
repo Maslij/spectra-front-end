@@ -83,35 +83,42 @@ using Spectra.Model.Client.Shared;
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 2 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+using Microsoft.Extensions.Configuration;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 3 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
 using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 4 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
 using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 5 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
 using Spectra.Model.Client.Data;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 6 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
 using Newtonsoft.Json;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 7 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
 using System.Text;
 
 #line default
@@ -126,7 +133,7 @@ using System.Text;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 133 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 138 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
        
     [Parameter]
     public string ProjectId { get; set; }
@@ -223,7 +230,7 @@ using System.Text;
         exportedProject = null;
         exportingProjectStatus = "Retrieving project.";
         var json_dict = new Dictionary<string, string>
-{
+        {
             { "Endpoint", Endpoint },
             { "TrainingKey", TrainingKey }
         };
@@ -258,8 +265,10 @@ using System.Text;
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private ModelApiService _modelApiService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private CustomVisionService _customVisionService { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private IHttpClientFactory clientFactory { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IConfiguration Configuration { get; set; }
     }
 }
 #pragma warning restore 1591
