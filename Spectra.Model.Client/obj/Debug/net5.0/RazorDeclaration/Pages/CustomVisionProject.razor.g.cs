@@ -154,7 +154,7 @@ using System.Text;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 259 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 261 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
        
     class DataItem
     {
@@ -220,7 +220,7 @@ using System.Text;
             __builder2.AddMarkupContent(0, "<div b-3jf46kur98>\r\n        Precision will tell you: <br b-3jf46kur98> if a tag is predicted by the <br b-3jf46kur98> model, how likely is that to be right?\r\n    </div>");
         }
 #nullable restore
-#line 317 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 319 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
           , options);
 
     void ShowRecallTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Open(elementReference, ds =>
@@ -233,7 +233,7 @@ using System.Text;
             __builder2.AddMarkupContent(1, "<div b-3jf46kur98>\r\n        Recall will tell you: <br b-3jf46kur98> out of the tags which should <br b-3jf46kur98> be predicted correctly, what percentage <br b-3jf46kur98> did the model correctly find?\r\n    </div>");
         }
 #nullable restore
-#line 322 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 324 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
           , options);
 
     void ShowAveragePrecisionTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Open(elementReference, ds =>
@@ -246,7 +246,7 @@ using System.Text;
             __builder2.AddMarkupContent(2, "<div b-3jf46kur98>\r\n        This number will tell you: <br b-3jf46kur98> the overall object detector performance <br b-3jf46kur98> across all the tags.\r\n</div>");
         }
 #nullable restore
-#line 327 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 329 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
       , options);
 
     void HideTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Close();
@@ -426,37 +426,10 @@ using System.Text;
     {
         exportingProject = true;
         exportedProject = null;
-        exportingProjectStatus = "Retrieving project.";
-        var json_dict = new Dictionary<string, string>
-{
-            { "Endpoint", Endpoint },
-            { "TrainingKey", TrainingKey }
-        };
-
-        var url = $"https://spectra-model-api.azurewebsites.net/api/project/{projectId}/images/{exportType}/{selectedIteration}";
-        var json = JsonConvert.SerializeObject(json_dict);
-
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Get,
-            RequestUri = new Uri(url),
-            Content = new StringContent(json, Encoding.UTF8, "application/json"),
-        };
-
         exportingProjectStatus = "Exporting annotations. This might take a while.";
+        var result = await _modelApiService.GetDataExport(ProjectId, exportType, currentIteration.Id.ToString());
 
-        var client = clientFactory.CreateClient();
-        client.Timeout = TimeSpan.FromMinutes(20);
-
-        var response = await client.SendAsync(request);
-
-        //var response = await client.SendAsync(request).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-
-        var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-        exportedProject = JsonConvert.DeserializeObject<Spectra.Model.Client.Models.Export>(responseBody);
-
+        exportedProject = result;
         exportingProject = false;
     }
 

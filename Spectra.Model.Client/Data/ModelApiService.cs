@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Spectra.Model.Client.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,39 @@ namespace Spectra.Model.Client.Data
 
             var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return responseBody;
+        }
+
+        public async Task<Export> GetDataExport(string projectId, string exportType, string selectedIteration)
+        {
+            Dictionary<string, string> apiHeaders = new Dictionary<string, string>
+            {
+                { "Endpoint", _Endpoint },
+                { "TrainingKey", _TrainingKey },
+                { "PredictionKey",  _PredictionKey}
+            };
+
+            httpHeaders = JsonConvert.SerializeObject(apiHeaders);
+
+            var url = $"https://spectra-model-api.azurewebsites.net/api/project/{projectId}/images/{exportType}/{selectedIteration}";
+            var json = JsonConvert.SerializeObject(apiHeaders);
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(url),
+                Content = new StringContent(json, Encoding.UTF8, "application/json"),
+            };
+
+            var client = _clientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromMinutes(20);
+            var response = await client.SendAsync(request);
+
+            //var response = await client.SendAsync(request).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var convertedResponse = JsonConvert.DeserializeObject<Spectra.Model.Client.Models.Export>(responseBody);
+            return convertedResponse;
         }
 
         public async Task<string> GetProject(string projectId)

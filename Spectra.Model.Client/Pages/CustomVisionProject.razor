@@ -58,11 +58,51 @@ else
                         {
                             <span class="badge badge-success mr-1 mt-1 mb-1" style="background-color:#074F30;">Trained on @taggedImageCount Images</span>
                         }
-                        
+
                         @foreach (var tag in projectTags)
                         {
                             <span class="badge badge-success mr-1 mt-1 mb-1" style="background-color:#074F30;">@tag.Name</span>
                         }
+
+                        <AuthorizeView>
+                            <Authorized>
+                                @if (activateExporting)
+                                {
+                                    <div class="btn-toolbar pt-5" role="toolbar" aria-label="Toolbar with button groups">
+                                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                                            <button style="background-color:#074F30;" disabled="@exportingProject" @onclick="() => GetProjectWithImagesAndRegions(Guid.Parse(ProjectId))" class="btn btn-primary">Export Data</button>
+                                        </div>
+                                        <div class="btn-group mr-2" role="group" aria-label="Second group">
+                                            <select @bind="exportType" class="custom-select" id="inputGroupSelect03">
+                                                <option value="customvision" selected>Custom Vision</option>
+                                                <option value="pascal">Pascal</option>
+                                                <option value="yolo">Yolo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p>Select an Iteration to export.</p>
+                                }
+
+                                @if (exportingProject)
+                                {
+                                    <div class="alert alert-info mt-2" role="alert" style="text-align:center;">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span>@exportingProjectStatus</span>
+                                    </div>
+                                }
+                                @if (exportedProject != null)
+                                {
+                                    <div class="alert alert-info mt-2" role="alert">
+                                        Export Completed, <a href="@exportedProject.ZippedProject" download="@exportedProject.ProjectId" target="_top">
+                                            download
+                                        </a> @exportedProject.ProjectId is ready!
+                                    </div>
+                                }
+                            </Authorized>
+                        </AuthorizeView>
                         <p class="pt-5" style="font-size:24px;">@customVisionProject.Description</p>
                     </div>
                 </div>
@@ -87,6 +127,12 @@ else
             </div>-->
             <div class="col-5">
                 <h1 class="pt-5" style="font-size:64px;">PERFORMANCE METRICS</h1>
+                <AuthorizeView>
+                    <NotAuthorized>
+                        <p>Finished training on <strong>@DateTime.Parse(currentIteration.TrainedAt.ToString()).ToLocalTime()</strong></p>
+                        <p>Iteration Id: <strong>@currentIteration.Id</strong></p>
+                    </NotAuthorized>
+                </AuthorizeView>
             </div>
             @if (updatingPerformance)
             {
@@ -96,12 +142,7 @@ else
                 var setPrecision = $"{Math.Round(_iterationPerformance[currentIteration.Id].Precision, 2) * 100}%";
                 var setRecall = $"{Math.Round(_iterationPerformance[currentIteration.Id].Recall, 2) * 100}%";
                 var setmAP = $"{Math.Round((double)_iterationPerformance[currentIteration.Id].AveragePrecision, 2) * 100}%";
-                <AuthorizeView>
-                    <Authorized>
-                        <p>Finished training on <strong>@DateTime.Parse(currentIteration.TrainedAt.ToString()).ToLocalTime()</strong></p>
-                        <p>Iteration Id: <strong>@currentIteration.Id</strong></p>
-                    </Authorized>
-                </AuthorizeView>
+
                 <div class="col">
                     <p class="text-center m-0 pt-5">
                         <span class="align-top">
@@ -171,45 +212,6 @@ else
                         </RadzenValueAxis>
                     </RadzenChart>
                 </div>
-                <AuthorizeView>
-                    <Authorized>
-                        @if (activateExporting)
-                        {
-                            <div class="btn-toolbar pt-5" role="toolbar" aria-label="Toolbar with button groups">
-                                <div class="btn-group mr-2" role="group" aria-label="First group">
-                                    <button disabled="@exportingProject" @onclick="() => GetProjectWithImagesAndRegions(Guid.Parse(ProjectId))" class="btn btn-primary">Export Data</button>
-                                </div>
-                                <div class="btn-group mr-2" role="group" aria-label="Second group">
-                                    <select @bind="exportType" class="custom-select" id="inputGroupSelect03">
-                                        <option value="customvision" selected>Custom Vision</option>
-                                        <option value="pascal">Pascal</option>
-                                        <option value="yolo">Yolo</option>
-                                    </select>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <p>Select an Iteration to export.</p>
-                        }
-
-                        @if (exportingProject)
-                        {
-                            <div class="alert alert-info mt-2" role="alert" style="text-align:center;">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <span>@exportingProjectStatus</span>
-                            </div>
-                        }
-                        @if (exportedProject != null)
-                        {
-                            <div class="alert alert-info mt-2" role="alert">
-                                Export Completed, <a href="@exportedProject.ZippedProject" download="@exportedProject.ProjectId" target="_top">
-                                    download
-                                </a> @exportedProject.ProjectId is ready!
-                            </div>
-                        }
-                    </Authorized>
-                </AuthorizeView>
             }
         </div>
 
@@ -503,37 +505,10 @@ else
     {
         exportingProject = true;
         exportedProject = null;
-        exportingProjectStatus = "Retrieving project.";
-        var json_dict = new Dictionary<string, string>
-{
-            { "Endpoint", Endpoint },
-            { "TrainingKey", TrainingKey }
-        };
-
-        var url = $"https://spectra-model-api.azurewebsites.net/api/project/{projectId}/images/{exportType}/{selectedIteration}";
-        var json = JsonConvert.SerializeObject(json_dict);
-
-        var request = new HttpRequestMessage
-        {
-            Method = HttpMethod.Get,
-            RequestUri = new Uri(url),
-            Content = new StringContent(json, Encoding.UTF8, "application/json"),
-        };
-
         exportingProjectStatus = "Exporting annotations. This might take a while.";
+        var result = await _modelApiService.GetDataExport(ProjectId, exportType, currentIteration.Id.ToString());
 
-        var client = clientFactory.CreateClient();
-        client.Timeout = TimeSpan.FromMinutes(20);
-
-        var response = await client.SendAsync(request);
-
-        //var response = await client.SendAsync(request).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-
-        var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-        exportedProject = JsonConvert.DeserializeObject<Spectra.Model.Client.Models.Export>(responseBody);
-
+        exportedProject = result;
         exportingProject = false;
     }
 }
