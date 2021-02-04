@@ -154,7 +154,7 @@ using System.Text;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 249 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 259 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
        
     class DataItem
     {
@@ -220,7 +220,7 @@ using System.Text;
             __builder2.AddMarkupContent(0, "<div b-3jf46kur98>\r\n        Precision will tell you: <br b-3jf46kur98> if a tag is predicted by the <br b-3jf46kur98> model, how likely is that to be right?\r\n    </div>");
         }
 #nullable restore
-#line 307 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 317 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
           , options);
 
     void ShowRecallTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Open(elementReference, ds =>
@@ -233,7 +233,7 @@ using System.Text;
             __builder2.AddMarkupContent(1, "<div b-3jf46kur98>\r\n        Recall will tell you: <br b-3jf46kur98> out of the tags which should <br b-3jf46kur98> be predicted correctly, what percentage <br b-3jf46kur98> did the model correctly find?\r\n    </div>");
         }
 #nullable restore
-#line 312 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 322 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
           , options);
 
     void ShowAveragePrecisionTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Open(elementReference, ds =>
@@ -246,39 +246,39 @@ using System.Text;
             __builder2.AddMarkupContent(2, "<div b-3jf46kur98>\r\n        This number will tell you: <br b-3jf46kur98> the overall object detector performance <br b-3jf46kur98> across all the tags.\r\n</div>");
         }
 #nullable restore
-#line 317 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 327 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
       , options);
 
-void HideTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Close();
+    void HideTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Close();
 
-protected async Task ConnectToCustomVision()
-{
-
-
-  try
-  {
-      projectLoading = true;
-      //customVisionProject = await trainingApi.GetProjectAsync(Guid.Parse(ProjectId));
-      string jsonString = await _modelApiService.GetProject(ProjectId);
-      customVisionProject = JsonConvert.DeserializeObject<SpectraProject>
-(jsonString);
-      projectLoading = false;
+    protected async Task ConnectToCustomVision()
+    {
 
 
-      projectIterationLoading = true;
-      projectIteration = await trainingApi.GetIterationsAsync(customVisionProject.Id);
-      taggedImageCount = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id);
-      untaggedImageCount = await trainingApi.GetUntaggedImageCountAsync(customVisionProject.Id);
-      projectTags = await trainingApi.GetTagsAsync(customVisionProject.Id);
-      projectIterationLoading = false;
+        try
+        {
+            projectLoading = true;
+            //customVisionProject = await trainingApi.GetProjectAsync(Guid.Parse(ProjectId));
+            string jsonString = await _modelApiService.GetProject(ProjectId);
+            customVisionProject = JsonConvert.DeserializeObject<SpectraProject>
+      (jsonString);
+            projectLoading = false;
 
 
-      currentIteration = projectIteration.OrderByDescending(x => x.TrainedAt).First();
-      _iterationPerformance[currentIteration.Id] = await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, currentIteration.Id, threshold: probabilityThreshold);
-      selectedIteration = currentIteration.Id;
+            projectIterationLoading = true;
+            projectIteration = await trainingApi.GetIterationsAsync(customVisionProject.Id);
+            taggedImageCount = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id);
+            untaggedImageCount = await trainingApi.GetUntaggedImageCountAsync(customVisionProject.Id);
+            projectTags = await trainingApi.GetTagsAsync(customVisionProject.Id);
+            projectIterationLoading = false;
 
-      var recallDifference = Math.Abs((_iterationPerformance[currentIteration.Id].Recall * 100) - 100);
-      donutChart["Recall"] = new DataItem[] {
+
+            currentIteration = projectIteration.OrderByDescending(x => x.TrainedAt).First();
+            _iterationPerformance[currentIteration.Id] = await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, currentIteration.Id, threshold: probabilityThreshold);
+            selectedIteration = currentIteration.Id;
+
+            var recallDifference = Math.Abs((_iterationPerformance[currentIteration.Id].Recall * 100) - 100);
+            donutChart["Recall"] = new DataItem[] {
     new DataItem {
     MeasurementType = "Recall",
     Value = _iterationPerformance[currentIteration.Id].Recall*100
@@ -290,8 +290,8 @@ protected async Task ConnectToCustomVision()
     }
     };
 
-      var precisionDifference = Math.Abs((_iterationPerformance[currentIteration.Id].Precision * 100) - 100);
-      donutChart["Precision"] = new DataItem[] {
+            var precisionDifference = Math.Abs((_iterationPerformance[currentIteration.Id].Precision * 100) - 100);
+            donutChart["Precision"] = new DataItem[] {
     new DataItem {
     MeasurementType = "Precision",
     Value = _iterationPerformance[currentIteration.Id].Recall*100
@@ -303,8 +303,8 @@ protected async Task ConnectToCustomVision()
     }
     };
 
-      var mAPDifference = Math.Abs((double)(_iterationPerformance[currentIteration.Id].AveragePrecision * 100) - 100);
-      donutChart["mAP"] = new DataItem[] {
+            var mAPDifference = Math.Abs((double)(_iterationPerformance[currentIteration.Id].AveragePrecision * 100) - 100);
+            donutChart["mAP"] = new DataItem[] {
     new DataItem {
     MeasurementType = "mAP",
     Value = _iterationPerformance[currentIteration.Id].Recall*100
@@ -317,39 +317,40 @@ protected async Task ConnectToCustomVision()
     };
 
 
-      if (!activateExporting)
-          activateExporting = true;
-  }
-  catch
-  {
+            if (!activateExporting)
+                activateExporting = true;
+        }
+        catch
+        {
 
-  }
-}
+        }
+    }
 
-protected async Task UpdateIteration(ChangeEventArgs e)
-{
-  updatingPerformance = true;
+    protected async Task UpdateIteration(ChangeEventArgs e)
+    {
+        updatingPerformance = true;
 
-  selectedIteration = Guid.Parse(e.Value.ToString());
-  currentIteration = projectIteration.Where(n => n.Id == selectedIteration).FirstOrDefault();
-  _iterationPerformance[currentIteration.Id] = await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, currentIteration.Id, threshold: probabilityThreshold);
-  _iterationTaggedImages[currentIteration.Id] = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id, iterationId: currentIteration.Id);
+        selectedIteration = Guid.Parse(e.Value.ToString());
+        currentIteration = projectIteration.Where(n => n.Id == selectedIteration).FirstOrDefault();
+        _iterationPerformance[currentIteration.Id] = await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, currentIteration.Id, threshold: probabilityThreshold);
+        _iterationTaggedImages[currentIteration.Id] = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id, iterationId: currentIteration.Id);
+        taggedImageCount = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id, selectedIteration);
 
-  updatingPerformance = false;
-}
-
-
-protected async Task UpdatePerformance(ChangeEventArgs e)
-{
-  updatingPerformance = true;
-  probabilityThreshold = Convert.ToDouble(e.Value.ToString()) / 100;
-
-  _iterationPerformance[currentIteration.Id] = await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, currentIteration.Id, threshold: probabilityThreshold);
-  _iterationTaggedImages[currentIteration.Id] = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id, iterationId: currentIteration.Id);
+        updatingPerformance = false;
+    }
 
 
-  var recallDifference = Math.Abs((_iterationPerformance[currentIteration.Id].Recall * 100) - 100);
-  donutChart["Recall"] = new DataItem[] {
+    protected async Task UpdatePerformance(ChangeEventArgs e)
+    {
+        updatingPerformance = true;
+        probabilityThreshold = Convert.ToDouble(e.Value.ToString()) / 100;
+
+        _iterationPerformance[currentIteration.Id] = await trainingApi.GetIterationPerformanceAsync(customVisionProject.Id, currentIteration.Id, threshold: probabilityThreshold);
+        _iterationTaggedImages[currentIteration.Id] = await trainingApi.GetTaggedImageCountAsync(customVisionProject.Id, iterationId: currentIteration.Id);
+
+
+        var recallDifference = Math.Abs((_iterationPerformance[currentIteration.Id].Recall * 100) - 100);
+        donutChart["Recall"] = new DataItem[] {
     new DataItem {
     MeasurementType = "Recall",
     Value = _iterationPerformance[currentIteration.Id].Recall*100
@@ -361,8 +362,8 @@ protected async Task UpdatePerformance(ChangeEventArgs e)
     }
     };
 
-  var precisionDifference = Math.Abs((_iterationPerformance[currentIteration.Id].Precision * 100) - 100);
-  donutChart["Precision"] = new DataItem[] {
+        var precisionDifference = Math.Abs((_iterationPerformance[currentIteration.Id].Precision * 100) - 100);
+        donutChart["Precision"] = new DataItem[] {
     new DataItem {
     MeasurementType = "Precision",
     Value = _iterationPerformance[currentIteration.Id].Recall*100
@@ -374,8 +375,8 @@ protected async Task UpdatePerformance(ChangeEventArgs e)
     }
     };
 
-  var mAPDifference = Math.Abs((double)(_iterationPerformance[currentIteration.Id].AveragePrecision * 100) - 100);
-  donutChart["mAP"] = new DataItem[] {
+        var mAPDifference = Math.Abs((double)(_iterationPerformance[currentIteration.Id].AveragePrecision * 100) - 100);
+        donutChart["mAP"] = new DataItem[] {
     new DataItem {
     MeasurementType = "mAP",
     Value = _iterationPerformance[currentIteration.Id].Recall*100
@@ -388,76 +389,76 @@ protected async Task UpdatePerformance(ChangeEventArgs e)
     };
 
 
-  updatingPerformance = false;
-}
+        updatingPerformance = false;
+    }
 
-protected override async Task OnInitializedAsync()
-{
-  await Task.Delay(1);
-  trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
-  ProjectId = ProjectId ?? null;
-  await ConnectToCustomVision();
-  //await PredictImage();
-  //Task.Run(() => PredictImage());
-}
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1);
+        trainingApi = _customVisionService.AuthenticateTraining(Endpoint, TrainingKey);
+        ProjectId = ProjectId ?? null;
+        await ConnectToCustomVision();
+        //await PredictImage();
+        //Task.Run(() => PredictImage());
+    }
 
-protected async Task<List<string>> PredictImage()
-{
-  loadDemoPredictions = true;
-  predictingImages = true;
-  foreach (var url in customVisionProject.DemoUrls)
-  {
-      var result = await _modelApiService.DemoPredictFromUrl(ProjectId, url, "People-Tracking-Demo");
-      predictionList.Add(result);
-  }
-  predictingImages = false;
-  return predictionList;
-}
+    protected async Task<List<string>> PredictImage()
+    {
+        loadDemoPredictions = true;
+        predictingImages = true;
+        foreach (var url in customVisionProject.DemoUrls)
+        {
+            var result = await _modelApiService.DemoPredictFromUrl(ProjectId, url, "People-Tracking-Demo");
+            predictionList.Add(result);
+        }
+        predictingImages = false;
+        return predictionList;
+    }
 
-protected void SetIterationId(Guid IterationId)
-{
-  if (!activateExporting)
-      activateExporting = true;
-  selectedIteration = IterationId;
-}
+    protected void SetIterationId(Guid IterationId)
+    {
+        if (!activateExporting)
+            activateExporting = true;
+        selectedIteration = IterationId;
+    }
 
-async Task GetProjectWithImagesAndRegions(Guid projectId)
-{
-  exportingProject = true;
-  exportedProject = null;
-  exportingProjectStatus = "Retrieving project.";
-  var json_dict = new Dictionary<string, string>
+    async Task GetProjectWithImagesAndRegions(Guid projectId)
+    {
+        exportingProject = true;
+        exportedProject = null;
+        exportingProjectStatus = "Retrieving project.";
+        var json_dict = new Dictionary<string, string>
 {
             { "Endpoint", Endpoint },
             { "TrainingKey", TrainingKey }
         };
 
-  var url = $"https://spectra-model-api.azurewebsites.net/api/project/{projectId}/images/{exportType}/{selectedIteration}";
-  var json = JsonConvert.SerializeObject(json_dict);
+        var url = $"https://spectra-model-api.azurewebsites.net/api/project/{projectId}/images/{exportType}/{selectedIteration}";
+        var json = JsonConvert.SerializeObject(json_dict);
 
-  var request = new HttpRequestMessage
-  {
-      Method = HttpMethod.Get,
-      RequestUri = new Uri(url),
-      Content = new StringContent(json, Encoding.UTF8, "application/json"),
-  };
+        var request = new HttpRequestMessage
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri(url),
+            Content = new StringContent(json, Encoding.UTF8, "application/json"),
+        };
 
-  exportingProjectStatus = "Exporting annotations. This might take a while.";
+        exportingProjectStatus = "Exporting annotations. This might take a while.";
 
-  var client = clientFactory.CreateClient();
-  client.Timeout = TimeSpan.FromMinutes(20);
+        var client = clientFactory.CreateClient();
+        client.Timeout = TimeSpan.FromMinutes(20);
 
-  var response = await client.SendAsync(request);
+        var response = await client.SendAsync(request);
 
-  //var response = await client.SendAsync(request).ConfigureAwait(false);
-  response.EnsureSuccessStatusCode();
+        //var response = await client.SendAsync(request).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
 
-  var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-  exportedProject = JsonConvert.DeserializeObject<Spectra.Model.Client.Models.Export>(responseBody);
+        exportedProject = JsonConvert.DeserializeObject<Spectra.Model.Client.Models.Export>(responseBody);
 
-  exportingProject = false;
-}
+        exportingProject = false;
+    }
 
 #line default
 #line hidden
