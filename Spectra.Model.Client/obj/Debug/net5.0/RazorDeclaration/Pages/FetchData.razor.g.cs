@@ -83,6 +83,20 @@ using Spectra.Model.Client.Shared;
 #line hidden
 #nullable disable
 #nullable restore
+#line 11 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\_Imports.razor"
+using Radzen;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 12 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\_Imports.razor"
+using Radzen.Blazor;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
 #line 3 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\FetchData.razor"
 using Spectra.Model.Client.Data;
 

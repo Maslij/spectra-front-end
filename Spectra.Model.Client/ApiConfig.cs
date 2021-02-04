@@ -13,6 +13,7 @@ namespace Spectra.Model.Client
     public class ModelApiConfig
     {
         public string TrainingKey { get; set; }
+        public string PredictionKey { get; set; }
         public string EndPoint { get; set; }
     }
 }

@@ -1,10 +1,11 @@
 @font-face {
-    font-family: Icons;
-    src: url(telstra/TELSTRAAKKURAT-REGULAR.OTF);
+    font-family: TelstraAkkurat;
+    src: url("/css/telstra/TELSTRAAKKURAT-REGULAR.OTF");
 }
 
 html, body {
     background-color: transparent;
+    font-family: TelstraAkkurat;
 }
 
 a, .btn-link {
@@ -45,9 +46,48 @@ a, .btn-link {
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+/* Chart 1 */
+.rz-scheme-monochrome .rz-series-0 {
+    fill: #fff;
+}
+
+.rz-scheme-monochrome .rz-series-item-0 {
+    fill: #074F30;
+}
+
+.rz-scheme-monochrome .rz-series-item-1 {
+    fill: #fff;
+}
+
+/* Chart 2 */
+.rz-scheme-divergent .rz-series-0 {
+    fill: #fff;
+}
+
+.rz-scheme-divergent .rz-series-item-0 {
+    fill: #074F30;
+}
+
+.rz-scheme-divergent .rz-series-item-1 {
+    fill: #fff;
+}
+
+/* Chart 3 */
+.rz-scheme-palette .rz-series-0 {
+    fill: #fff;
+}
+
+.rz-scheme-palette .rz-series-item-0 {
+    fill: #074F30;
+}
+
+.rz-scheme-palette .rz-series-item-1 {
+    fill: #fff;
+}

@@ -82,6 +82,20 @@ using Spectra.Model.Client.Shared;
 #line hidden
 #nullable disable
 #nullable restore
+#line 11 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\_Imports.razor"
+using Radzen;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 12 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\_Imports.razor"
+using Radzen.Blazor;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
 #line 1 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
 using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
 
@@ -111,27 +125,34 @@ using Spectra.Model.Client.Models;
 #nullable disable
 #nullable restore
 #line 5 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
-using Newtonsoft.Json;
+using Spectra.Model.Client.Helpers;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 6 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
-using System.Linq;
+using Newtonsoft.Json;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 7 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
-using System.Text;
+using System.Linq;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
 #line 8 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
+using System.Text;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 9 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
 using System.Net;
 
 #line default
@@ -145,13 +166,19 @@ using System.Net;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 44 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
+#line 50 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProjects.razor"
        
+
     private IList<SpectraProject> customVisionProjects = new List<SpectraProject>();
+
+    // Categories
+    private IList<string> spectraCategories = new List<string>();
+
+    // Dictionary with Categories
+    private Dictionary<string, IList<SpectraProject>> projectsInCategories = new Dictionary<string, IList<SpectraProject>>();
 
     private string TrainingKey = "c750b0db2467468c87352d069d4a38e2";
     private string Endpoint = "https://spectra-video-analytics.cognitiveservices.azure.com/";
-
 
     protected async Task ConnectToCustomVision()
     {
@@ -162,6 +189,13 @@ using System.Net;
         string jsonString = await _modelApiService.GetProjects();
 
         customVisionProjects = JsonConvert.DeserializeObject<IList<SpectraProject>>(jsonString);
+        spectraCategories = customVisionProjects.Select(c => c.Category).Distinct().ToList();
+
+        foreach (var category in spectraCategories)
+        {
+            var match = customVisionProjects.Where(cvProject => cvProject.Category == category).ToList();
+            projectsInCategories.Add(category, match);
+        }
 
     }
 

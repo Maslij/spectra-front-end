@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Spectra.Model.Client.Models;
+using Radzen;
 
 namespace Spectra.Model.Client
 {
@@ -52,6 +53,7 @@ namespace Spectra.Model.Client
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<CustomVisionService>();
             services.AddSingleton<ModelApiService>();
+            services.AddScoped<TooltipService>();
 
             services.Configure<ApiConfig>(Configuration.GetSection("ApiSettings"));
         }

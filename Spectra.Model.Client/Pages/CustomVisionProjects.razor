@@ -2,6 +2,7 @@
 @using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
 @using Spectra.Model.Client.Data;
 @using Spectra.Model.Client.Models;
+@using Spectra.Model.Client.Helpers;
 @using Newtonsoft.Json;
 @using System.Linq;
 @using System.Text;
@@ -12,41 +13,52 @@
 
 
 <div class="container">
-    <div class="row">
-        <div class="row" style="padding-top: 10px;">
-            <div class="card-deck">
-                @if (customVisionProjects == null)
-                {
-                    <i class="fas fa-spinner fa-spin"></i>
-                }
-                else
-                {
-                    @foreach (var project in customVisionProjects)
-                    {
+        @if (customVisionProjects == null)
+        {
+            <i class="fas fa-spinner fa-spin"></i>
+        }
+        else
+        {
+            foreach (KeyValuePair<string, IList<SpectraProject>> kvp in projectsInCategories)
+            {
+                <div class="row" style="padding-top: 10px;">
+                    <h6>@StringFormattingHelper.FirstLetterToUpperCase(kvp.Key) [@kvp.Value.Count()]</h6>
+                </div>
+                <div class="row" style="padding-top: 10px;">
+                    <div class="card-deck">
+                        @foreach (var project in kvp.Value)
+                        {
 
-                        <div class="card" style="width: 18rem;">
-                            <img src="@project.ThumbnailUri" class="card-img-top" alt="..." style="height: 200px;">
-                            <div class="card-body">
-                                <span class="badge badge-secondary" style="margin-bottom:5px;">@project.Settings.ClassificationType</span>
-                                <h5 class="card-title">@project.Name</h5>
-                                <p class="card-text">@project.Description</p>
-                                <a href="/project/@project.Id" class="stretched-link"></a>
+                            <div class="card" style="width: 18rem;">
+                                <img src="@project.ThumbnailUri" class="card-img-top" alt="..." style="height: 200px;">
+                                <div class="card-body">
+                                    <span class="badge badge-secondary" style="margin-bottom:5px;">@project.Settings.ClassificationType</span>
+                                    <h5 class="card-title">@project.Name</h5>
+                                    <!--<p class="card-text">@project.Description</p>-->
+                                    <a href="/project/@project.Id" class="stretched-link"></a>
 
+                                </div>
                             </div>
-                        </div>
-                    }
-                }
-            </div>
-        </div>
-    </div>
+                        }
+                    </div>
+                </div>
+
+            }
+        }
 </div>
 
 @code {
+
     private IList<SpectraProject> customVisionProjects = new List<SpectraProject>();
+
+    // Categories
+    private IList<string> spectraCategories = new List<string>();
+
+    // Dictionary with Categories
+    private Dictionary<string, IList<SpectraProject>> projectsInCategories = new Dictionary<string, IList<SpectraProject>>();
 
     private string TrainingKey = "c750b0db2467468c87352d069d4a38e2";
     private string Endpoint = "https://spectra-video-analytics.cognitiveservices.azure.com/";
-
 
     protected async Task ConnectToCustomVision()
     {
@@ -57,6 +69,13 @@
         string jsonString = await _modelApiService.GetProjects();
 
         customVisionProjects = JsonConvert.DeserializeObject<IList<SpectraProject>>(jsonString);
+        spectraCategories = customVisionProjects.Select(c => c.Category).Distinct().ToList();
+
+        foreach (var category in spectraCategories)
+        {
+            var match = customVisionProjects.Where(cvProject => cvProject.Category == category).ToList();
+            projectsInCategories.Add(category, match);
+        }
 
     }
 
