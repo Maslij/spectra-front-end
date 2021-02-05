@@ -49,15 +49,6 @@ else
                             }
                         </select>
                         <h1 class="mb-0 mt-4" style="font-size:64px;">@customVisionProject.Name</h1>
-                        @if (updatingPerformance)
-                        {
-
-                            <span class="badge badge-success mr-1 mt-1 mb-1" style="background-color:#074F30;"><i class="fas fa-spinner fa-spin"></i></span>
-                        }
-                        else
-                        {
-                            <span class="badge badge-success mr-1 mt-1 mb-1" style="background-color:#074F30;">Trained on @taggedImageCount Images</span>
-                        }
 
                         @foreach (var tag in projectTags)
                         {
@@ -116,7 +107,7 @@ else
 
         </div>
     </div>
-    <div class="container-fluid p-0 mt-4">
+    <div class="container-fluid p-0 mt-4" style="background-color: #b2e6b2;">
         <div class="row">
             <!--<div class="col-3">
                 <label>Probability Threshold</label>
@@ -127,6 +118,15 @@ else
             </div>-->
             <div class="col-5 pl-5 pr-5">
                 <h1 class="pt-5" style="font-size:64px;">Performance Metrics</h1>
+                @if (updatingPerformance)
+                {
+
+                    <span class="badge badge-success mr-1 mt-1 mb-1" style="background-color:#074F30;"><i class="fas fa-spinner fa-spin"></i></span>
+                }
+                else
+                {
+                    <span class="badge badge-success mr-1 mt-1 mb-1" style="background-color:#074F30;">Trained on @taggedImageCount Images</span>
+                }
                 <AuthorizeView>
                     <Authorized>
                         <p>Finished training on <strong>@DateTime.Parse(currentIteration.TrainedAt.ToString()).ToLocalTime()</strong></p>
@@ -221,44 +221,62 @@ else
         <div class="row">
             <div class="col pl-5">
                 <h1 class="pt-5" style="font-size:64px;">Demonstration</h1>
-                @if (!loadDemoPredictions)
-                {
-                    <button disabled="@loadDemoPredictions" @onclick="() => PredictImage()" class="btn btn-success" style="background-color:#074F30;">Predict</button>
-                }
             </div>
         </div>
-        <div class="row">
-            <div class="col-6 pl-5 pr-5">
+        <div class="row text-center justify-content-center align-items-center">
+            <div class="col-5 pl-5 pr-5">
                 <h4>Input</h4>
-                @foreach (var url in customVisionProject.DemoUrls)
-                {
-                    <div class="card" style="width: 32rem;">
-                        <img class="card-img-top" src="@url" alt="Card image cap">
-                    </div>
-                }
             </div>
-            <div class="col-6">
-                @if (predictingImages)
-                {
-                    <i class="fas fa-spinner fa-spin"></i>
-
-                }
-                else
-                {
-                    @if (predictionList.Count > 0)
+            <div class="col"></div>         
+            <div class="col-5 pl-5 pr-5">
+                <h4>Result</h4>
+            </div>
+        </div>
+            <div class="row text-center justify-content-center align-items-center">
+                <div class="col-5 pl-5 pr-5">
+                    @foreach (var url in customVisionProject.DemoUrls)
                     {
-                        <h4>Result</h4>
-                    }
-                    @foreach (var response in predictionList)
-                    {
-                        <div class="card" style="width: 32rem;">
-                            <img class="card-img-top" src="@response" alt="Card image cap">
+                        <div class="card mx-auto" style="width: 32rem;">
+                            <img class="card-img-top" src="@url" alt="Card image cap">
                         </div>
                     }
-                }
+                </div>
+                <div class="col">
+                    @if (!loadDemoPredictions)
+                    {
+                        <button disabled="@loadDemoPredictions" @onclick="() => PredictImage()" class="btn btn-success" style="background-color:#074F30;">Predict</button>
+                    }
+                </div>
+                <div class="col-5">
+                    @if (predictionList.Count == 0)
+                    {
+                        @if (predictingImages)
+                        {
+                            <i class="fas fa-spinner fa-spin"></i>
+
+                        }
+                        else
+                        {
+                            @foreach (var url in customVisionProject.DemoUrls)
+                            {
+                                <div class="card mx-auto" style="width: 32rem;">
+                                    <img class="card-img-top" src="@url" alt="Card image cap">
+                                </div>
+                            }
+                        }
+                    }
+                    @if (!predictingImages)
+                    {
+                        @foreach (var response in predictionList)
+                        {
+                            <div class="card mx-auto" style="width: 32rem;">
+                                <img class="card-img-top" src="@response" alt="Card image cap">
+                            </div>
+                        }
+                    }
+                </div>
             </div>
         </div>
-    </div>
 
 
         }
