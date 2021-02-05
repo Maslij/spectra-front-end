@@ -223,60 +223,61 @@ else
                 <h1 class="pt-5" style="font-size:64px;">Demonstration</h1>
             </div>
         </div>
-        <div class="row text-center justify-content-center align-items-center">
+        <hr class="pl-5 pr-5 pb-5 ml-5 mr-5"/>
+        <div class="row pl-5">
             <div class="col-5 pl-5 pr-5">
                 <h4>Input</h4>
             </div>
-            <div class="col"></div>         
+            <div class="col"></div>
             <div class="col-5 pl-5 pr-5">
                 <h4>Result</h4>
             </div>
         </div>
-            <div class="row text-center justify-content-center align-items-center">
-                <div class="col-5 pl-5 pr-5">
-                    @foreach (var url in customVisionProject.DemoUrls)
+        <div class="row text-center justify-content-center align-items-center">
+            <div class="col-5 pl-5 pr-5">
+                @foreach (var url in customVisionProject.DemoUrls)
+                {
+                    <div class="card mx-auto" style="width: 32rem;">
+                        <img class="card-img-top" src="@url" alt="Card image cap">
+                    </div>
+                }
+            </div>
+            <div class="col">
+                @if (!loadDemoPredictions)
+                {
+                    <button disabled="@loadDemoPredictions" @onclick="() => PredictImage()" class="btn btn-success" style="background-color:#074F30;">Predict</button>
+                }
+            </div>
+            <div class="col-5">
+                @if (predictionList.Count == 0)
+                {
+                    @if (predictingImages)
                     {
-                        <div class="card mx-auto" style="width: 32rem;">
-                            <img class="card-img-top" src="@url" alt="Card image cap">
-                        </div>
-                    }
-                </div>
-                <div class="col">
-                    @if (!loadDemoPredictions)
-                    {
-                        <button disabled="@loadDemoPredictions" @onclick="() => PredictImage()" class="btn btn-success" style="background-color:#074F30;">Predict</button>
-                    }
-                </div>
-                <div class="col-5">
-                    @if (predictionList.Count == 0)
-                    {
-                        @if (predictingImages)
-                        {
-                            <i class="fas fa-spinner fa-spin"></i>
+                        <i class="fas fa-spinner fa-spin"></i>
 
-                        }
-                        else
-                        {
-                            @foreach (var url in customVisionProject.DemoUrls)
-                            {
-                                <div class="card mx-auto" style="width: 32rem;">
-                                    <img class="card-img-top" src="@url" alt="Card image cap">
-                                </div>
-                            }
-                        }
                     }
-                    @if (!predictingImages)
+                    else
                     {
-                        @foreach (var response in predictionList)
+                        @foreach (var url in customVisionProject.DemoUrls)
                         {
                             <div class="card mx-auto" style="width: 32rem;">
-                                <img class="card-img-top" src="@response" alt="Card image cap">
+                                <img class="card-img-top" src="@url" alt="Card image cap">
                             </div>
                         }
                     }
-                </div>
+                }
+                @if (!predictingImages)
+                {
+                    @foreach (var response in predictionList)
+                    {
+                        <div class="card mx-auto" style="width: 32rem;">
+                            <img class="card-img-top" src="@response" alt="Card image cap">
+                        </div>
+                    }
+                }
             </div>
         </div>
+    </div>
 
 
         }

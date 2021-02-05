@@ -154,7 +154,7 @@ using System.Text;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 284 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 285 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
                
     class DataItem
         {
@@ -220,7 +220,7 @@ using System.Text;
             __builder2.AddMarkupContent(0, "<div b-3jf46kur98>\r\n            Precision will tell you: <br b-3jf46kur98> if a tag is predicted by the <br b-3jf46kur98> model, how likely is that to be right?\r\n        </div>");
         }
 #nullable restore
-#line 342 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 343 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
               , options);
 
   void ShowRecallTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Open(elementReference, ds =>
@@ -233,7 +233,7 @@ using System.Text;
             __builder2.AddMarkupContent(1, "<div b-3jf46kur98>\r\n        Recall will tell you: <br b-3jf46kur98> out of the tags which should <br b-3jf46kur98> be predicted correctly, what percentage <br b-3jf46kur98> did the model correctly find?\r\n    </div>");
         }
 #nullable restore
-#line 347 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 348 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
           , options);
 
 void ShowAveragePrecisionTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Open(elementReference, ds =>
@@ -246,7 +246,7 @@ void ShowAveragePrecisionTooltip(ElementReference elementReference, TooltipOptio
             __builder2.AddMarkupContent(2, "<div b-3jf46kur98>\r\n        This number will tell you: <br b-3jf46kur98> the overall object detector performance <br b-3jf46kur98> across all the tags.\r\n    </div>");
         }
 #nullable restore
-#line 352 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
+#line 353 "C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\Pages\CustomVisionProject.razor"
           , options);
 
   void HideTooltip(ElementReference elementReference, TooltipOptions options = null) => tooltipService.Close();
