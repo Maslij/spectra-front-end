@@ -14,6 +14,9 @@ namespace Spectra.Model.Client.Models
         [JsonProperty("demoUrls")]
         public string[] DemoUrls { get; set; }
 
+        [JsonProperty("heroUrl")]
+        public string HeroUrl { get; set; }
+
         [JsonProperty("created")]
         public DateTime Created { get; set; }
 

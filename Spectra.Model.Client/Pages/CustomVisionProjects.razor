@@ -34,7 +34,7 @@
                                 <div class="card-body">
                                     <span class="badge badge-secondary" style="margin-bottom:5px;">@project.Settings.ClassificationType</span>
                                     <h5 class="card-title">@project.Name</h5>
-                                    <!--<p class="card-text">@project.Description</p>-->
+                                    <p class="card-text">@project.Description.Split('.')[0]</p>
                                     <a href="/project/@project.Id" class="stretched-link"></a>
 
                                 </div>
