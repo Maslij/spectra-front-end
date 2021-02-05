@@ -6,6 +6,7 @@
 html, body {
     background-color: transparent;
     font-family: TelstraAkkurat;
+    overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
 a, .btn-link {
