@@ -225,7 +225,7 @@ else
         </div>
         <hr class="pl-5 pr-5 pb-5 ml-5 mr-5"/>
         <div class="row pl-5">
-            <div class="col-5 pl-5 pr-5">
+            <div class="col-5 pr-5">
                 <h4>Input</h4>
             </div>
             <div class="col"></div>
@@ -248,7 +248,7 @@ else
                     <button disabled="@loadDemoPredictions" @onclick="() => PredictImage()" class="btn btn-success" style="background-color:#074F30;">Predict</button>
                 }
             </div>
-            <div class="col-5">
+            <div class="col-5 pl-5 pr-5">
                 @if (predictionList.Count == 0)
                 {
                     @if (predictingImages)
