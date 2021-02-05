@@ -149,7 +149,7 @@ else
                             Precision
                         </span>
                         <RadzenIcon Icon="info" MouseLeave="@(args => HideTooltip(args) )" MouseEnter="@(args => ShowPrecisionTooltip(args,
-                                                                            new TooltipOptions(){ Style = "background-color:#B2E6B2; color:#414141;", Position = TooltipPosition.Top }) )" />
+                                                                            new TooltipOptions(){ Style = "background-color:#B2E6B2; color:#414141;", Duration = null, Position = TooltipPosition.Top }) )" />
                     </p>
                     <RadzenChart ColorScheme="@colorSchemePrecision">
                         <RadzenDonutSeries Data="@donutChart["Precision"]" ValueProperty="Value">
@@ -172,7 +172,7 @@ else
                             Recall
                         </span>
                         <RadzenIcon Icon="info" MouseLeave="@(args => HideTooltip(args) )" MouseEnter="@(args => ShowRecallTooltip(args,
-                                                                            new TooltipOptions(){ Style = "background-color:#B2E6B2; color:#414141;", Position = TooltipPosition.Top }) )" />
+                                                                            new TooltipOptions(){ Style = "background-color:#B2E6B2; color:#414141;", Duration = null, Position = TooltipPosition.Top }) )" />
                     </p>
                     <RadzenChart ColorScheme="@colorSchemeRecall">
                         <RadzenDonutSeries Data="@donutChart["Recall"]" ValueProperty="Value">
@@ -195,7 +195,7 @@ else
                             mAP
                         </span>
                         <RadzenIcon Icon="info" MouseLeave="@(args => HideTooltip(args) )" MouseEnter="@(args => ShowAveragePrecisionTooltip(args,
-                                                                            new TooltipOptions(){ Style = "background-color:#B2E6B2; color:#414141;", Position = TooltipPosition.Left }) )" />
+                                                                            new TooltipOptions(){ Style = "background-color:#B2E6B2; color:#414141;", Duration = null, Position = TooltipPosition.Left }) )" />
                     </p>
                     <RadzenChart ColorScheme="@colorSchemeAveragePrecision">
                         <RadzenDonutSeries Data="@donutChart["mAP"]" ValueProperty="Value">
