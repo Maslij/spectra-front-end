@@ -138,3 +138,5 @@ C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\obj\Debug
 C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\obj\Debug\net5.0\ref\Spectra.Model.Client.dll
 C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\obj\Debug\net5.0\Spectra.Model.Client.pdb
 C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\obj\Debug\net5.0\Spectra.Model.Client.genruntimeconfig.cache
+C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\obj\Debug\net5.0\RazorDeclaration\Pages\AnchorLink.razor.g.cs
+C:\Users\Alec\source\spectra\Spectra.Model.Client\Spectra.Model.Client\obj\Debug\net5.0\Razor\Pages\AnchorLink.razor.g.cs
