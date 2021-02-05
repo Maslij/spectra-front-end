@@ -47,15 +47,15 @@
     align-items: center;
 }
 
-    .top-row[b-5siuq89tld]  a, .top-row .btn-link[b-5siuq89tld] {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-    }
+.top-row[b-5siuq89tld]  a, .top-row .btn-link[b-5siuq89tld] {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+}
 
-    .top-row a:first-child[b-5siuq89tld] {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.top-row a:first-child[b-5siuq89tld] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 @media (max-width: 640.98px) {
     .top-row:not(.auth)[b-5siuq89tld] {
@@ -90,8 +90,8 @@
     }
 
     .main > div[b-5siuq89tld] {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 }
 /* _content/Spectra.Model.Client/Shared/NavBar.razor.rz.scp.css */
